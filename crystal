@@ -1,0 +1,57 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract CircleMath {
+    // Variables pour stocker π et φ
+    uint256 public pi;
+    uint256 public phi;
+
+    // Constantes pour précision
+    uint256 constant precision = 10**18; // 18 décimales pour la précision
+    uint256 constant iterations = 100000; // Nombre d'itérations pour approximation
+
+    // Calcul de π par la méthode de Monte Carlo
+    function calculatePi() public {
+        uint256 insideCircle = 0;
+        uint256 totalPoints = iterations;
+
+        for (uint256 i = 0; i < totalPoints; i++) {
+            // Générer des points aléatoires x et y dans [0, 1]
+            uint256 x = uint256(keccak256(abi.encodePacked(block.timestamp, i))) % precision;
+            uint256 y = uint256(keccak256(abi.encodePacked(block.timestamp, i + 1))) % precision;
+
+            // Vérifier si le point est dans le cercle
+            if ((x * x + y * y) <= (precision * precision)) {
+                insideCircle++;
+            }
+        }
+
+        // Approximer π : 4 * (points dans le cercle / total points)
+        pi = (4 * insideCircle * precision) / totalPoints;
+    }
+
+    // Calcul de φ (nombre d'or)
+    function calculatePhi() public {
+        uint256 sqrt5 = sqrt(5 * precision); // Racine carrée de 5
+        phi = (precision + sqrt5) / 2; // (1 + √5) / 2
+    }
+
+    // Fonction utilitaire pour calculer la racine carrée (méthode d'approximation)
+    function sqrt(uint256 x) internal pure returns (uint256) {
+        uint256 z = (x + 1) / 2;
+        uint256 y = x;
+        while (z < y) {
+            y = z;
+            z = (x / z + z) / 2;
+        }
+        return y;
+    }
+
+    // Obtenir les positions approximatives sur le cercle
+    function getPositions(uint256 radius) public view returns (uint256[] memory) {
+        uint256;
+        positions[0] = radius * 314 / 100; // Approximation de π
+        positions[1] = radius * 1618 / 1000; // Approximation de φ
+        return positions;
+    }
+}
